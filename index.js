@@ -1,5 +1,8 @@
 import Player from "./src/Player.js";
 import animate from "./src/animationLoop.js";
+import { createImage } from "./src/utils.js";
+import { createMap } from "./src/createMap.js";
+import Boundary from "./src/Boundary.js";
 
 const canvas = document.querySelector("canvas");
 const c = canvas.getContext("2d");
@@ -7,55 +10,36 @@ const c = canvas.getContext("2d");
 canvas.width = innerWidth;
 canvas.height = innerHeight;
 
-class Boundary {
-  static width = 40;
-  static height = 40;
-  constructor({ position }) {
-    this.position = position;
-    this.width = Boundary.width;
-    this.height = Boundary.height;
-  }
-
-  draw(c) {
-    c.fillStyle = "blue";
-    c.fillRect(this.position.x, this.position.y, this.width, this.height);
-  }
-}
-
 const map = [
-  ["-", "-", "-", "-", "-", "-", "-"],
-  ["-", " ", " ", " ", " ", " ", "-"],
-  ["-", " ", "-", " ", "-", " ", "-"],
-  ["-", " ", "-", " ", "-", " ", "-"],
-  ["-", " ", " ", " ", " ", " ", "-"],
-  ["-", "-", "-", "-", "-", "-", "-"],
+  ["1", "-", "-", "-", "-", "-", "-", "-", "-", "-", "2"],
+  ["|", ".", ".", ".", ".", ".", ".", ".", ".", ".", "|"],
+  ["|", ".", "b", ".", "[", "7", "]", ".", "b", ".", "|"],
+  ["|", ".", ".", ".", ".", "_", ".", ".", ".", ".", "|"],
+  ["|", ".", "[", "]", ".", ".", ".", "[", "]", ".", "|"],
+  ["|", ".", ".", ".", ".", "^", ".", ".", ".", ".", "|"],
+  ["|", ".", "b", ".", "[", "+", "]", ".", "b", ".", "|"],
+  ["|", ".", ".", ".", ".", "_", ".", ".", ".", ".", "|"],
+  ["|", ".", "[", "]", ".", ".", ".", "[", "]", ".", "|"],
+  ["|", ".", ".", ".", ".", "^", ".", ".", ".", ".", "|"],
+  ["|", ".", "b", ".", "[", "5", "]", ".", "b", ".", "|"],
+  ["|", ".", ".", ".", ".", ".", ".", ".", ".", "p", "|"],
+  ["4", "-", "-", "-", "-", "-", "-", "-", "-", "-", "3"],
 ];
 
 const boundaries = [];
+const pellets = [];
 
-map.forEach((row, rowIndex) => {
-  row.forEach((symbol, columnIndex) => {
-    switch (symbol) {
-      case "-":
-        boundaries.push(
-          new Boundary({
-            position: {
-              x: Boundary.width * columnIndex,
-              y: Boundary.height * rowIndex,
-            },
-          })
-        );
-        break;
-    }
-  });
-});
+createMap({ map: map, boundaries: boundaries, pellets: pellets });
 
 boundaries.forEach((boundary) => {
   boundary.draw(c);
 });
 
 const player = new Player({
-  position: { x: Boundary.width * 1.5, y: Boundary.height * 1.5 },
+  position: {
+    x: Boundary.width + Boundary.width / 2,
+    y: Boundary.height + Boundary.height / 2,
+  },
   velocity: { x: 0, y: 0 },
 });
 
@@ -81,4 +65,5 @@ animate({
   c: c,
   boundaries: boundaries,
   player: player,
+  pellets: pellets,
 });
